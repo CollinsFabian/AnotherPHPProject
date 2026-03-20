@@ -1,18 +1,18 @@
-AnotherPHPProject (APP)
+# AnotherPHPProject (APP)
 
 A minimal, no-nonsense PHP framework focused on simplicity, direct execution, and full developer control.
 
 ---
 
-Overview
+## Overview
 
 AnotherPHPProject (APP) is designed for developers who prefer writing raw, understandable PHP without heavy abstractions or unnecessary framework layers.
 
-No magic. No containers. Just straightforward routing and execution.
+No magic. No complex containers. Just straightforward routing and execution.
 
 ---
 
-Features
+## Features
 
 - Simple routing (closures and controllers)
 - Direct execution flow
@@ -21,20 +21,36 @@ Features
 
 ---
 
-Usage
+## Usage
 
-Define Routes
+**Starting a server**
 
-$router->get('/hello', function () {
-    return "Hello world";
-});
-
-$router->get('/user/{id}', [UserController::class, 'show']);
+```console
+php -S localhost:3000 -t public
+```
 
 ---
 
-Controller Example
 
+**Define Routes**
+
+```php
+$router->get('/', function () {
+    return "Hello world";
+});
+
+$router->get('/home', fn() => to("/")); // redirecting urls (old/legacy) to new routes
+
+$router->get('/user/{id}', [UserController::class, 'show']);
+
+$router->get('/dashboard', [DashboardController::class, 'index'])->middleware([\Core\Middleware\AuthMiddleware::class]);
+```
+
+---
+
+**Controller Example**
+
+```php
 class UserController
 {
     public function show($id)
@@ -42,27 +58,34 @@ class UserController
         return "User: " . $id;
     }
 }
+```
 
 ---
 
-Route Execution
+**Route Execution**
 
-public function executeRoute(array $route)
+```php
+public function executeRoute(array $route, Request $request)
 {
     $action = $route['action'];
     $params = $route['params'] ?? [];
 
-    if (is_callable($action)) return $action(...array_values($params));
+    if (is_callable($action)) return $action($request, ...array_values($params));
 
     if (is_array($action)) {
         [$controller, $method] = $action;
-        return (new $controller)->$method(...array_values($params));
+        $instance = $this->container->make($controller);
+
+        return $instance->$method(...array_values($params));
     }
+
+    throw new \Exception("Invalid route action");
 }
+```
 
 ---
 
-Philosophy
+### Philosophy
 
 - Keep it simple
 - Avoid unnecessary abstraction
@@ -70,14 +93,13 @@ Philosophy
 
 ---
 
-Not Included
+### _Not (yet) Inplemented_
 
-- Dependency injection containers
-- Middleware pipelines
-- Heavy framework features
+- Models (under works)
+- Additional features
 
 ---
 
-License
+### License
 
-MIT
+**MIT**
