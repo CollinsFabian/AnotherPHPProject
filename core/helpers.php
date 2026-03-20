@@ -7,7 +7,7 @@ function base_path(string $path = ''): string
 
 function redirect(string $url)
 {
-    return new \Core\Http\Response()->redirect($url);
+    return (new \Core\Http\Response())->redirect($url);
 }
 
 function to(string $url)
