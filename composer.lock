@@ -1,0 +1,63 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "f85ef04172c6a0a7034123cb9f4e9e81",
+    "packages": [
+        {
+            "name": "urchmann/zquery",
+            "version": "1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/CollinsFabian/ZQuery.git",
+                "reference": "dd685e7b5ac160d3080aa2501cc216394216ac45"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/CollinsFabian/ZQuery/zipball/dd685e7b5ac160d3080aa2501cc216394216ac45",
+                "reference": "dd685e7b5ac160d3080aa2501cc216394216ac45",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.2"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "ZQuery\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "proprietary"
+            ],
+            "authors": [
+                {
+                    "name": "CollinsFabian",
+                    "email": "alphaalive22@gmail.com"
+                }
+            ],
+            "description": "ZQuery is a lightweight PHP database query builder and ORM",
+            "support": {
+                "issues": "https://github.com/CollinsFabian/ZQuery/issues",
+                "source": "https://github.com/CollinsFabian/ZQuery/tree/v1.1.0"
+            },
+            "time": "2026-03-21T11:37:10+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": {},
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": {
+        "php": "^7.4 || ^8.0",
+        "ext-pdo": "*",
+        "ext-mbstring": "*"
+    },
+    "platform-dev": {},
+    "plugin-api-version": "2.9.0"
+}
