@@ -1,5 +1,5 @@
 {
-    "name": "CollinsFabian/AnotherPHPProject",
+    "name": "collinsfabian/another-php-project",
     "description": "A simple PHP framework",
     "type": "project",
     "license": "MIT",
@@ -22,6 +22,7 @@
     ],
     "require": {
         "php": "^7.4 || ^8.0",
+        "urchmann/zquery": "*",
         "ext-pdo": "*",
         "ext-mbstring": "*"
     },
