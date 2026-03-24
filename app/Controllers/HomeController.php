@@ -10,11 +10,23 @@ class HomeController
 
     public function index($id = null)
     {
-        // $users = $this->userService->getAll();
-        $user = $this->userService->getOne();
+        return view("pages.home", [
+            "title" => "My App",
+        ]);
+    }
+
+    public function dashboard($id = null)
+    {
+        $columnArray = [
+            ['id', '=', 5]
+        ];
+
+        $user = $this->userService->getOne($columnArray);
+        // print_r($user);
+        // exit;
 
         return view("pages.home", [
-            "name" => $user["name"],
+            "name" => $user["fname"],
             "title" => $id ?? "Home",
         ]);
     }

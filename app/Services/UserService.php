@@ -2,18 +2,19 @@
 
 namespace App\Services;
 
+use App\Models\User;
+
 class UserService
 {
     public function getAll(): array
     {
-        return [
-            ['id' => 1, 'name' => 'Urchmann'],
-            ['id' => 2, 'name' => 'Zi Urch'],
-        ];
+        return [];
+        return (new User())->getAll();
     }
 
-    public function getOne(): array
+    public function getOne($columnArray): array
     {
-        return ['name' => 'Urchmann'];
+        return [];
+        return (new User())->getOne($columnArray);
     }
 }

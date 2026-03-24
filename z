@@ -1,0 +1,19 @@
+#!/usr/bin/env php
+<?php
+
+function handle(array $argv): void
+{
+    if (in_array('--dev', $argv)) {
+        passthru("node tools/builder/dev.js");
+        return;
+    }
+
+    if (in_array('--prod', $argv)) {
+        passthru("node tools/builder/build.js --prod");
+        return;
+    }
+
+    passthru("node tools/builder/build.js");
+}
+
+handle($argv);

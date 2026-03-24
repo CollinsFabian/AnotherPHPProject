@@ -1,0 +1,20 @@
+{
+  "name": "builder",
+  "version": "1.0.0",
+  "description": "",
+  "main": "build.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "autoprefixer": "^10.4.27",
+    "chokidar": "^5.0.0",
+    "esbuild": "^0.27.4",
+    "fs-extra": "^11.3.4",
+    "postcss": "^8.5.8"
+  }
+}

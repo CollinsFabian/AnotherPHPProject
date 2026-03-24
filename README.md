@@ -1,4 +1,4 @@
-# AnotherPHPProject (APP)
+# Ziro
 
 A minimal, no-nonsense PHP framework focused on simplicity, direct execution, and full developer control.
 
@@ -6,7 +6,7 @@ A minimal, no-nonsense PHP framework focused on simplicity, direct execution, an
 
 ## Overview
 
-AnotherPHPProject (APP) is designed for developers who prefer writing raw, understandable PHP without heavy abstractions or unnecessary framework layers.
+Ziro is designed for developers who prefer writing raw, understandable PHP without heavy abstractions or unnecessary framework layers.
 
 No magic. No complex containers. Just straightforward routing and execution.
 
