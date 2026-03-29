@@ -13,7 +13,13 @@ class Kernel
 {
     protected Router $router;
     protected Container $container;
-    protected array $middlewareStack = [];
+    protected array $middlewareStack = [
+        "rate_limit" => \App\Middleware\RateLimit::class,
+        "json_only" => \App\Middleware\JsonOnly::class,
+        "jwt_auth" => \App\Middleware\Auth\JwtAuth::class,
+        "api_key_auth" => \App\Middleware\Auth\ApiKeyAuth::class,
+        "session_auth" => \App\Middleware\Auth\SessionAuth::class,
+    ];
 
     public function __construct($container = null)
     {
@@ -39,7 +45,8 @@ class Kernel
     public function registerRoutes(): void
     {
         $router = $this->router; // DI
-        require base_path("routes/web.php");
+        require base_path("app/Routes/web.php");
+        require base_path("app/Routes/api.php");
     }
 
     public function handle(Request $request): Response
@@ -47,7 +54,8 @@ class Kernel
         $route = $this->router->match($request);
         if (!$route) return new Response("Route not found", 404);
 
-        $middlewares = [...$this->middlewareStack, ...$route['middleware'] ?? []];
+        $middlewares = [];
+        foreach ($route['middleware'] as $m) $middlewares[] = $this->middlewareStack[$m];
 
         $pipeline = new Pipeline($this->container);
         $result = $pipeline

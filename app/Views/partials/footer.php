@@ -5,5 +5,5 @@
 </footer>
 
 <script>
-    hljs.highlightAll();
+    typeof hljs !== "undefined" && hljs.highlightAll()
 </script>

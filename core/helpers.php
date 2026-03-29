@@ -7,7 +7,12 @@ function base_path(string $path = ''): string
 
 function redirect(string $url)
 {
-    return (new \Core\Http\Response())->redirect($url);
+    return \Core\Http\Response::redirect($url);
+}
+
+function json(array $data, int $status = 200)
+{
+    return \Core\Http\Response::json($data, $status);
 }
 
 function to(string $url)

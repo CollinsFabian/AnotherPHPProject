@@ -17,11 +17,19 @@ class Response
         echo $this->content;
     }
 
-    public function redirect(string $url, $status = 302): static
+    public static function json(array $data, int $status = 200): void
     {
-        $this->content = "";
-        $this->status = $status;
-        $this->headers['Location'] = $url;
-        return $this;
+        http_response_code($status);
+        header('Content-Type: application/json');
+
+        echo json_encode($data);
+        exit;
+    }
+
+    public static function redirect(string $url, $status = 302): static
+    {
+        http_response_code($status);
+        header("Location: {$url}");
+        exit;
     }
 }

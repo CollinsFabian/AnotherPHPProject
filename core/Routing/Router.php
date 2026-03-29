@@ -26,7 +26,6 @@ class Router
         [$uri, $action] = $args;
         $index = count($this->routes[$method] ?? []);
 
-
         $this->routes[$method][$index] = [
             'uri' => $uri,
             'action' => $action,
@@ -71,7 +70,6 @@ class Router
                 array_shift($matches);
 
                 $params = array_combine($route["pattern"]["params"], $matches);
-
                 return [...$route, 'params' => $params];
             }
         }

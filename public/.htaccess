@@ -1,0 +1,32 @@
+DirectoryIndex index.php
+
+Options -Indexes
+
+ErrorDocument 403 /error
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Ensure the base path is correct
+    RewriteBase /
+
+    # Redirect everything except existing files/folders to index.php
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^ index.php [QSA,L]
+</IfModule>
+
+<IfModule mod_filter.c>
+    AddOutputFilterByType DEFLATE text/plain
+    AddOutputFilterByType DEFLATE text/html
+    AddOutputFilterByType DEFLATE text/xml
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE application/xml
+    AddOutputFilterByType DEFLATE application/json
+    AddOutputFilterByType DEFLATE application/javascript
+    AddOutputFilterByType DEFLATE application/x-javascript
+    AddOutputFilterByType DEFLATE font/woff
+    AddOutputFilterByType DEFLATE font/woff2
+
+    SetEnvIfNoCase Request_URI \.(?:gif|jpe?g|png|webp|woff2?|zip|gz|rar|7z|mp4|avi)$ no-gzip dont-vary
+</IfModule>

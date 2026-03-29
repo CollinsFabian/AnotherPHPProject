@@ -5,6 +5,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= $title ?? "Authenticated" ?></title>
+    <link rel="stylesheet" href="<?= asset("css/login.css") ?>">
+</head>
+
+<body>
+    <div id="main">
+        <?= $content ?>
+    </div>
+
+    <script src="<?= asset("js/login.js") ?>"></script>
+
     <?php if (getenv('APP_ENV') === 'dev'): ?>
         <script>
             (function() {
@@ -29,15 +39,6 @@
             })();
         </script>
     <?php endif; ?>
-    <link rel="stylesheet" href="<?= asset("css/main.css") ?>">
-</head>
-
-<body>
-    <div id="main">
-        <?= $content ?>
-    </div>
-
-    <script src="<?= asset("js/main.js") ?>"></script>
 </body>
 
 </html>

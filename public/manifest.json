@@ -1,6 +1,7 @@
 {
-  "js/main.js": "js/main.f83d32ef.js",
-  "css/main.css": "css/main.73bfc19e.css",
+  "js/landing.js": "js/landing.15cd8229.js",
+  "js/login.js": "js/login.js",
+  "js/utils.js": "js/utils.js",
   "css/landing.css": "css/landing.c6b8cdb2.css",
-  "js/landing.js": "js/landing.js"
+  "css/login.css": "css/login.9bd12c96.css"
 }

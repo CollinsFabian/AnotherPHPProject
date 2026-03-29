@@ -8,10 +8,10 @@ class HomeController
 {
     public function __construct(protected UserService $userService) {}
 
-    public function index($id = null)
+    public function index($slug = null)
     {
         return view("pages.home", [
-            "title" => "My App",
+            "title" => $slug ?? "Ziro",
         ]);
     }
 
@@ -27,7 +27,16 @@ class HomeController
 
         return view("pages.home", [
             "name" => $user["fname"],
-            "title" => $id ?? "Home",
+            "title" => $id ?? "Dashboard",
         ]);
+    }
+
+    public function login()
+    {
+        return view(
+            "pages.login",
+            ["title" => "Login", "header" => "Login to your account"],
+            'layouts/auth'
+        );
     }
 }
