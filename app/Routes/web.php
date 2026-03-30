@@ -13,4 +13,5 @@ $router->get('/home/{slug1}', [HomeController::class, 'index']);
 $router->get('/login', [HomeController::class, 'login']);
 
 $router->get('/dashboard', [HomeController::class, 'dashboard'])
-    ->middleware(['session_auth']);
+    // ->middleware(['session_auth'])
+;

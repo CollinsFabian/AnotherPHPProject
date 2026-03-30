@@ -11,13 +11,13 @@ return new class
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 name VARCHAR(100),
                 email VARCHAR(150),
-                created_at TIMESTAMP DEAFAULT CURRENT_TIMESTAMP,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         ");
     }
 
-    public function down(mysqli $db)
+    public function down(ZQuery $db)
     {
-        $db->query("DROP TABLE users");
+        $db->getConnection()->execute("DROP TABLE users");
     }
 };

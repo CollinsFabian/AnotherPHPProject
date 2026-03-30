@@ -4,9 +4,11 @@ namespace Core\CLI\Commands\DB;
 
 use Core\CLI\Command;
 use Core\CLI\ConsoleMessages;
-use mysqli;
 use ZQuery\Support\ConfigLoader;
 use ZQuery\ZQuery;
+use PDO;
+use ZQuery\Query\Grammar\MysqlGrammar;
+use ZQuery\Support\Environment;
 
 class Migrate extends Command
 {
@@ -16,29 +18,42 @@ class Migrate extends Command
     {
         $this::brand();
 
-        $DB_HOST = ConfigLoader::get("DB_HOST");
+        Environment::load(__DIR__ . "/../../../../.env");
+        $DB_PDO_DSN = ConfigLoader::get("DB_PDO_DSN");
         $DB_USER = ConfigLoader::get("DB_USER");
-        $DB_NAME = ConfigLoader::get("DB_NAME");
-        $DB_PORT = ConfigLoader::get("DB_PORT");
         $DB_PASSWORD = ConfigLoader::get("DB_PASSWORD");
 
-        $mysql = new mysqli($DB_HOST, $DB_USER, $DB_PASSWORD, $DB_NAME, $DB_PORT);
-        $db = new ZQuery(["engine" => "mysql", "mysql" => $mysql]);
+        $db = new ZQuery([
+            "engine" => "pdo",
+            "pdo" => new PDO($DB_PDO_DSN, $DB_USER, $DB_PASSWORD),
+            "grammar" => new MysqlGrammar(),
+        ]);
 
-        $migrationPath = __DIR__ . "/../../../database/migrations/";
-        $files = glob("{$migrationPath}.php");
+        $migrationPath = __DIR__ . "/../../../../database/migrations/";
+        $files = glob("{$migrationPath}*.php");
+
+        // ensure migrations table exists
+        $db->getConnection()->execute(
+            "CREATE TABLE IF NOT EXISTS `migrations` (
+                `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                `migration` VARCHAR(255) NOT NULL UNIQUE,
+                `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"
+        );
 
         // get executed migrations
         $executed = [];
         $result = $db->table("migrations")->select(["migration"])->get();
 
-        for ($i = 0; $i < count($result); $i++) $executed[] = $result['migration'];
+        for ($i = 0; $i < count($result); $i++) {
+            $executed[] = $result[$i]['migration'];
+        }
         foreach ($files as $file) {
             $name = basename($file);
 
             if (in_array($name, $executed)) continue;
 
-            echo "\033[32mRunning: {$name}\033[0m\n";
+            $this->normalM("Running: {$name}");
 
             $migration = require $file;
             $migration->up($db);
@@ -46,6 +61,6 @@ class Migrate extends Command
             $db->table("migrations")->insert(["migration" => $name])->executeInsert();
         }
 
-        echo "\033[32mMigration complete\033[0m\n";
+        $this->successM("Migration complete");
     }
 }

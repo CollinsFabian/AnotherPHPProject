@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4ac40c432e4bcac50d74d875ba274c5c",
+    "content-hash": "fb3890bf6143d4ac783d7490ffc53a43",
     "packages": [
         {
             "name": "zi/zquery",
@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/CollinsFabian/ZQuery.git",
-                "reference": "9536269095b3ab0f673567b62576b048decded62"
+                "reference": "5c7ff97b478e88b04294985abb238fea059564cf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/CollinsFabian/ZQuery/zipball/9536269095b3ab0f673567b62576b048decded62",
-                "reference": "9536269095b3ab0f673567b62576b048decded62",
+                "url": "https://api.github.com/repos/CollinsFabian/ZQuery/zipball/5c7ff97b478e88b04294985abb238fea059564cf",
+                "reference": "5c7ff97b478e88b04294985abb238fea059564cf",
                 "shasum": ""
             },
             "require": {
@@ -43,9 +43,9 @@
             "description": "ZQuery is a lightweight PHP database query builder and ORM",
             "support": {
                 "issues": "https://github.com/CollinsFabian/ZQuery/issues",
-                "source": "https://github.com/CollinsFabian/ZQuery/tree/v0.1.1-alpha"
+                "source": "https://github.com/CollinsFabian/ZQuery/tree/main"
             },
-            "time": "2026-03-24T21:17:19+00:00"
+            "time": "2026-03-30T00:36:30+00:00"
         }
     ],
     "packages-dev": [],

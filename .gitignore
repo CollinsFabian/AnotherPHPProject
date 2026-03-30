@@ -9,9 +9,11 @@
 # Logs
 *.log
 /logs/
+database/migrations
 
 # Cache
 /cache/
+/storage/cache/
 
 # Temporary files
 /tmp/
