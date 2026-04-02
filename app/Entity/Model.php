@@ -3,19 +3,13 @@
 namespace App\Entity;
 
 use PDO;
-use ZQuery\Entity\Base;
 use ZQuery\Query\Grammar\MysqlGrammar;
 use ZQuery\Support\ConfigLoader;
 use ZQuery\ZQuery;
 
-class Model extends Base
+class Model
 {
     protected static ?ZQuery $zquery = null;
-
-    public function __construct(array $data = [])
-    {
-        parent::__construct($data);
-    }
 
     public static function zquery(): ZQuery
     {

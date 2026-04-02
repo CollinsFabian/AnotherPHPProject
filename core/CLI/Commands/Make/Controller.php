@@ -32,7 +32,7 @@ class Controller extends Command
         }
 
 
-        $stub = file_get_contents(__DIR__ . "/../../stubs/controller.php");
+        $stub = file_get_contents(__DIR__ . "/../../stubs/controller/_className.php");
         $stub = str_replace("_className", $name, $stub);
 
         file_put_contents($filepath, $stub);

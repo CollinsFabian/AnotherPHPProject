@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/CollinsFabian/ZQuery.git",
-                "reference": "5c7ff97b478e88b04294985abb238fea059564cf"
+                "reference": "dc2ca5ed1d6dff30196ea1e3a6f367d93f7ea995"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/CollinsFabian/ZQuery/zipball/5c7ff97b478e88b04294985abb238fea059564cf",
-                "reference": "5c7ff97b478e88b04294985abb238fea059564cf",
+                "url": "https://api.github.com/repos/CollinsFabian/ZQuery/zipball/dc2ca5ed1d6dff30196ea1e3a6f367d93f7ea995",
+                "reference": "dc2ca5ed1d6dff30196ea1e3a6f367d93f7ea995",
                 "shasum": ""
             },
             "require": {
@@ -40,12 +40,24 @@
                     "email": "alphaalive22@gmail.com"
                 }
             ],
-            "description": "ZQuery is a lightweight PHP database query builder and ORM",
+            "description": "Focused fluent SQL query builder for PHP 8.2+",
+            "keywords": [
+                "database",
+                "fluent-interface",
+                "mysql",
+                "mysqli",
+                "pdo",
+                "php",
+                "postgresql",
+                "query-builder",
+                "sql",
+                "transactions"
+            ],
             "support": {
                 "issues": "https://github.com/CollinsFabian/ZQuery/issues",
                 "source": "https://github.com/CollinsFabian/ZQuery/tree/main"
             },
-            "time": "2026-03-30T00:36:30+00:00"
+            "time": "2026-04-02T13:35:08+00:00"
         }
     ],
     "packages-dev": [],

@@ -2,15 +2,35 @@
 
 namespace App\Entity;
 
-use ZQuery\Entity\Attributes\Column;
+use ZQuery\Query\QueryBuilder;
 
 class User extends Model
 {
-    protected static string $table = 'users';
-    protected static string $primaryKey = 'id';
+    private const TABLE = 'users';
+    private const PRIMARY_KEY = 'id';
 
-    #[Column('id')]
-    public int $id;
-    public string $fname;
-    public string $othrnames;
+    public static function query(): QueryBuilder
+    {
+        return static::zquery()->table(self::TABLE);
+    }
+
+    public static function find(int $id): ?array
+    {
+        return static::query()
+            ->where(self::PRIMARY_KEY, '=', $id)
+            ->first();
+    }
+
+    public static function all(): array
+    {
+        return static::query()->get();
+    }
+
+    public static function latest(int $limit = 10): array
+    {
+        return static::query()
+            ->latest('created_at')
+            ->limit($limit)
+            ->get();
+    }
 }
