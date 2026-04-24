@@ -10,7 +10,7 @@ class ErrorLogger
 {
     public static function boot(): void
     {
-        $logDirectory = base_path('storage/logs');
+        $logDirectory = base_path('system/storage/logs');
         if (!is_dir($logDirectory)) {
             mkdir($logDirectory, 0775, true);
         }
