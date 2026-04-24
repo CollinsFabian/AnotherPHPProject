@@ -1,17 +1,21 @@
 <?php
 
-namespace App\Middleware\Auth;
+namespace Ziro\Middleware\Auth;
 
-use App\Services\Auth\TokenStore;
-use Core\Http\Request;
+use Ziro\Services\Auth\TokenStore;
+use Ziro\System\Http\Request;
+use Ziro\System\Http\Response;
+use Ziro\System\Middleware\MiddlewareInterface;
 
-class ApiKeyAuth
+class ApiKeyAuth implements MiddlewareInterface
 {
-    public function handle(Request $request, $next)
+    public function handle(Request $request, callable $next)
     {
-        $key = $_SERVER['HTTP_X_API_KEY'] ?? null;
+        $key = $request->header('X-Api-Key');
 
-        if (!$key || !TokenStore::validate($key)) return json(['error' => 'Forbidden'], 403);
+        if (!$key || !TokenStore::validate($key)) {
+            return Response::json(['status' => 'error', 'message' => 'Forbidden'], 403);
+        }
         return $next($request);
     }
 }

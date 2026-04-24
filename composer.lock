@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fb3890bf6143d4ac783d7490ffc53a43",
+    "content-hash": "66e45147c1f262f37adc8a2cc05a6ede",
     "packages": [
         {
             "name": "zi/zquery",
@@ -69,7 +69,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": "^7.4 || ^8.0",
+        "php": "^8.0",
         "ext-pdo": "*",
         "ext-mbstring": "*"
     },

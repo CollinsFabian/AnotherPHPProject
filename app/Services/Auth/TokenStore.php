@@ -1,16 +1,14 @@
 <?php
 
-namespace App\Services\Auth;
+namespace Ziro\Services\Auth;
 
 class TokenStore
 {
-    protected static array $validKeys = [
-        'abc1234',
-        'rxyz789'
-    ];
-
     public static function validate(string $key): bool
     {
-        return in_array($key, self::$validKeys, true);
+        $configured = (string) config('APP_API_KEYS', 'abc1234,rxyz789');
+        $validKeys = array_filter(array_map('trim', explode(',', $configured)));
+
+        return in_array($key, $validKeys, true);
     }
 }

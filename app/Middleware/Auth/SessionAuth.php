@@ -1,20 +1,21 @@
 <?php
 
-namespace App\Middleware\Auth;
+namespace Ziro\Middleware\Auth;
 
-use Core\Http\Request;
-use Core\Middleware\MiddlewareInterface;
-use App\Support\Context;
+use Ziro\System\Http\Request;
+use Ziro\System\Middleware\MiddlewareInterface;
+use Ziro\Support\Context;
 
 class SessionAuth implements MiddlewareInterface
 {
     public function handle(Request $request, callable $next)
     {
-        session_start();
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            session_start();
+        }
 
         if (!isset($_SESSION['user'])) return redirect('/login');
 
-        // inject into Context for global access
         Context::set('user', $_SESSION['user']);
 
         return $next($request);

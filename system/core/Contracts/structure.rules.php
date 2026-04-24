@@ -1,0 +1,121 @@
+<?php
+
+return [
+    'required_directories' => [
+        'app',
+        'app/Controllers',
+        'app/Controllers/Api',
+        'app/Entity',
+        'app/Middleware',
+        'app/Services',
+        'bootstrap',
+        'database',
+        'database/migrations',
+        'public',
+        'public/assets',
+        'public/assets/css',
+        'public/assets/js',
+        'public/assets/templates',
+        'resources',
+        'resources/assets',
+        'resources/assets/css',
+        'resources/assets/js',
+        'resources/assets/templates',
+        'routes',
+        'storage',
+        'storage/cache',
+        'storage/logs',
+        'system',
+        'system/core',
+        'system/deploy',
+        'system/tools',
+        'system/tools/builder',
+    ],
+    'required_files' => [
+        'bootstrap/app.php',
+        'public/index.php',
+        'resources/index.html',
+        'routes/api.php',
+        'README.md',
+        'composer.json',
+        'package.json',
+        'system/core/CLI/zi.php',
+        'system/core/Contracts/structure.rules.php',
+    ],
+    'forbidden_path_patterns' => [
+        '#^app/Routes/api\.php$#',
+    ],
+    'sealed_directory_patterns' => [
+        'bootstrap' => [
+            'files' => [
+                '#^app\.php$#',
+            ],
+            'directories' => [],
+        ],
+        'routes' => [
+            'files' => [
+                '#^api\.php$#',
+            ],
+            'directories' => [],
+        ],
+        'resources' => [
+            'files' => [
+                '#^index\.html$#',
+            ],
+            'directories' => [
+                '#^assets$#',
+            ],
+        ],
+        'public' => [
+            'files' => [
+                '#^index\.php$#',
+                '#^index\.html$#',
+                '#^manifest\.json$#',
+            ],
+            'directories' => [
+                '#^assets$#',
+            ],
+        ],
+        'system' => [
+            'files' => [],
+            'directories' => [
+                '#^core$#',
+                '#^deploy$#',
+                '#^tools$#',
+            ],
+        ],
+    ],
+    'allowed_root_entry_patterns' => [
+        '#^\.env$#',
+        '#^\.env\.example$#',
+        '#^\.git$#',
+        '#^\.gitignore$#',
+        '#^\.tmp$#',
+        '#^README\.md$#',
+        '#^app$#',
+        '#^bootstrap$#',
+        '#^composer\.json$#',
+        '#^composer\.lock$#',
+        '#^database$#',
+        '#^node_modules$#',
+        '#^package-lock\.json$#',
+        '#^package\.json$#',
+        '#^public$#',
+        '#^resources$#',
+        '#^routes$#',
+        '#^storage$#',
+        '#^system$#',
+        '#^vendor$#',
+        '#^zi$#',
+        '#^zi\.bat$#',
+    ],
+    'ignored_root_entries' => [
+        '.vscode',
+        '.idea',
+        '.zed',
+        '.fleet',
+    ],
+    'ignored_root_patterns' => [
+        '/^\.history$/',
+    ],
+];

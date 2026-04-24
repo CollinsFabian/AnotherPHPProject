@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Entity;
+namespace Ziro\Entity;
 
 use PDO;
 use ZQuery\Query\Grammar\MysqlGrammar;

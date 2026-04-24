@@ -1,4 +1,12 @@
 {
+  "name": "ziro-framework",
+  "private": true,
+  "scripts": {
+    "build": "node system/tools/builder/build.js",
+    "build:prod": "node system/tools/builder/build.js --prod",
+    "dev": "node system/tools/builder/dev.js",
+    "structure:validate": "zi structure:validate"
+  },
   "dependencies": {
     "ws": "^8.20.0"
   }

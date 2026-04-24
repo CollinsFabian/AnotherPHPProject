@@ -1,14 +1,21 @@
 <?php
 
-namespace App\Middleware;
+namespace Ziro\Middleware;
 
-use Core\Http\Request;
+use Ziro\System\Http\Request;
+use Ziro\System\Http\Response;
+use Ziro\System\Middleware\MiddlewareInterface;
 
-class JsonOnly
+class JsonOnly implements MiddlewareInterface
 {
-    public function handle(Request $request, $next)
+    public function handle(Request $request, callable $next)
     {
-        if (!isset($_SERVER['CONTENT_TYPE']) || $_SERVER['CONTENT_TYPE'] !== 'application/json') return json(['error' => 'JSON required'], 415);
+        $contentType = strtolower((string) $request->header('Content-Type', ''));
+
+        if (!str_starts_with($contentType, 'application/json')) {
+            return Response::json(['status' => 'error', 'message' => 'JSON required'], 415);
+        }
+
         return $next($request);
     }
 }

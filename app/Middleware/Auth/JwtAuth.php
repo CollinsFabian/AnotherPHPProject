@@ -1,20 +1,26 @@
 <?php
 
-namespace App\Middleware\Auth;
+namespace Ziro\Middleware\Auth;
 
-use App\Services\Auth\JwtService;
-use App\Support\Context;
-use Core\Http\Request;
+use Ziro\Services\Auth\JwtService;
+use Ziro\Support\Context;
+use Ziro\System\Http\Request;
+use Ziro\System\Http\Response;
+use Ziro\System\Middleware\MiddlewareInterface;
 
-class JwtAuth
+class JwtAuth implements MiddlewareInterface
 {
-    public function handle(Request $request, $next)
+    public function handle(Request $request, callable $next)
     {
-        $header = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
-        if (!preg_match('/Bearer\s(\S+)/', $header, $matches)) return json(['error' => 'Unauthorized'], 401);
+        $header = (string) $request->header('Authorization', '');
+        if (!preg_match('/Bearer\s(\S+)/', $header, $matches)) {
+            return Response::json(['status' => 'error', 'message' => 'Unauthorized'], 401);
+        }
 
         $payload = JwtService::verify($matches[1]);
-        if (!$payload) return json(['error' => 'Invalid token'], 401);
+        if (!$payload) {
+            return Response::json(['status' => 'error', 'message' => 'Invalid token'], 401);
+        }
         Context::set('user', $payload);
 
         return $next($request);

@@ -1,23 +1,27 @@
 <?php
 
-namespace App\Middleware;
+namespace Ziro\Middleware;
 
-use Core\Cache\Cache;
-use Core\Http\Request;
+use Ziro\System\Cache\Cache;
+use Ziro\System\Http\Request;
+use Ziro\System\Http\Response;
+use Ziro\System\Middleware\MiddlewareInterface;
 
-class RateLimit
+class RateLimit implements MiddlewareInterface
 {
     protected int $max = 15;
 
-    public function handle(Request $request, $next)
+    public function handle(Request $request, callable $next)
     {
-        $ip = $_SERVER['REMOTE_ADDR'];
+        $ip = $request->server['REMOTE_ADDR'] ?? 'unknown';
         $key = "rate_{$ip}";
 
         $cache = new Cache();
         $count = $cache->get($key) ?: 0;
 
-        if ($count >= $this->max) return json(['status' => 'error', 'message' => 'Too many requests'], 429);
+        if ($count >= $this->max) {
+            return Response::json(['status' => 'error', 'message' => 'Too many requests'], 429);
+        }
 
         $cache->set($key, $count + 1, 60);
 

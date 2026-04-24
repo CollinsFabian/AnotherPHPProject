@@ -1,14 +1,16 @@
 <?php
 
-namespace App\Controllers\Api;
+namespace Ziro\Controllers\Api;
 
-use App\Entity\User;
+use Ziro\Entity\User;
+use Ziro\System\Http\Request;
 
 class UserController
 {
-    public function profile()
+    public function profile(Request $request)
     {
-        $id = isset($_GET['id']) ? (int) $_GET['id'] : null;
+        $id = $request->input('id');
+        $id = is_numeric($id) ? (int) $id : null;
         $user = $id !== null ? User::find($id) : null;
 
         if ($user === null) {
@@ -18,6 +20,6 @@ class UserController
             ], 404);
         }
 
-        return json(["status" => "success", "data" => $user]);
+        return json(['status' => 'success', 'data' => $user]);
     }
 }

@@ -23,18 +23,18 @@
         }
     ],
     "require": {
-        "php": "^7.4 || ^8.0",
+        "php": "^8.0",
         "zi/zquery": "dev-main",
         "ext-pdo": "*",
         "ext-mbstring": "*"
     },
     "autoload": {
         "files": [
-            "core/helpers.php"
+            "system/core/helpers.php"
         ],
         "psr-4": {
-            "App\\": "app/",
-            "Core\\": "core/"
+            "Ziro\\": "app/",
+            "Ziro\\System\\": "system/core/"
         }
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Entity;
+namespace Ziro\Entity;
 
 use ZQuery\Query\QueryBuilder;
 
