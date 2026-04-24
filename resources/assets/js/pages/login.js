@@ -1,7 +1,8 @@
-import { api } from "../api.js";
+import { ApiClient } from "../api.js";
 import { renderFooter } from "../components/footer.js";
 import { loadTemplate, renderTemplate } from "../template.js";
 import { dom } from "../dom.js";
+const api = new ApiClient();
 
 const loginTemplatePath = '/assets/templates/pages/login.html';
 
@@ -59,7 +60,7 @@ export async function mountLoginPage() {
     dom.on(form, 'submit', onSubmit);
 
     return () => {
-        dom.off(form,'submit', onSubmit);
+        dom.off(form, 'submit', onSubmit);
         dom.docBody.classList.remove('route-login');
     };
 }

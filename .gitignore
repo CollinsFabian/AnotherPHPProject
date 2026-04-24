@@ -12,8 +12,8 @@
 database/migrations
 
 # Cache
-/cache/
-/storage/cache/
+*cache/
+*/storage/cache/
 
 # Temporary files
 /tmp/
