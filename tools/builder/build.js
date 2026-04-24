@@ -3,6 +3,7 @@ const esbuild = require('esbuild');
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const cssnano = require('cssnano');
 const postcss = require('postcss');
 const autoprefixer = require('autoprefixer');
 
@@ -14,7 +15,7 @@ const PUBLIC = path.join(ROOT, 'public');
 const manifest = {};
 
 
-['js', 'css'].forEach(dir => {
+['js', 'css', 'templates'].forEach(dir => {
     const full = path.join(PUBLIC, dir);
     if (!fs.existsSync(full)) fs.mkdirSync(full, { recursive: true });
 });
@@ -22,6 +23,31 @@ const manifest = {};
 // Utility: hash
 function hash(content) {
     return crypto.createHash('md5').update(content).digest('hex').slice(0, 8);
+}
+
+function resolveCssImports(content, fromFile, seen = new Set()) {
+    const importPattern = /@import\s+["'](.+?)["'];?/g;
+    let result = content;
+    let match;
+
+    while ((match = importPattern.exec(content)) !== null) {
+        const importPath = match[1];
+        if (!importPath.startsWith('.')) continue;
+
+        const resolvedPath = path.resolve(path.dirname(fromFile), importPath);
+        if (seen.has(resolvedPath) || !fs.existsSync(resolvedPath)) {
+            result = result.replace(match[0], '');
+            continue;
+        }
+
+        seen.add(resolvedPath);
+        const importedContent = fs.readFileSync(resolvedPath, 'utf-8');
+        const flattenedContent = resolveCssImports(importedContent, resolvedPath, seen);
+
+        result = result.replace(match[0], flattenedContent);
+    }
+
+    return result;
 }
 
 // Utility: write file with optional hash
@@ -45,26 +71,19 @@ function writeFile(type, name, content) {
 
 // JS BUILD
 async function buildJS() {
-    const dir = path.join(RESOURCES, 'js');
-    if (!fs.existsSync(dir)) return;
+    const entryFile = path.join(RESOURCES, 'js', 'main.js');
+    const result = await esbuild.build({
+        entryPoints: [entryFile],
+        bundle: true,
+        minify: isProd,
+        sourcemap: !isProd,
+        write: false,
+    });
 
-    const files = fs.readdirSync(dir).filter(f => f.endsWith('.js'));
+    const file = result.outputFiles.find(f => f.path && f.path.endsWith('.js')) || result.outputFiles[0];
+    const content = file.text;
 
-    for (const file of files) {
-        const name = file.replace('.js', '');
-
-        const result = await esbuild.build({
-            entryPoints: [path.join(dir, file)],
-            bundle: true,
-            minify: isProd,
-            sourcemap: !isProd,
-            write: false,
-        });
-
-        const content = result.outputFiles[0].text;
-
-        writeFile('js', name, content);
-    }
+    writeFile('js', 'main', content);
 }
 
 // CSS BUILD
@@ -72,32 +91,83 @@ async function buildCSS() {
     const dir = path.join(RESOURCES, 'css');
     if (!fs.existsSync(dir)) return;
 
-    const files = fs.readdirSync(dir).filter(f => f.endsWith('.css'));
+    const filePath = path.join(dir, 'app.css');
+    let content = fs.readFileSync(filePath, 'utf-8');
+    content = resolveCssImports(content, filePath);
 
-    for (const file of files) {
-        const name = file.replace('.css', '');
-        let content = fs.readFileSync(path.join(dir, file), 'utf-8');
+    const result = await postcss([
+        autoprefixer,
+        ...(isProd ? [cssnano] : [])
+    ]).process(content, { from: undefined });
 
-        // PostCSS processing
-        const result = await postcss([
-            autoprefixer
-        ]).process(content, { from: undefined });
+    content = result.css;
+    writeFile('css', 'app', content);
+}
 
-        content = result.css;
+function copyDirectory(source, destination) {
+    if (!fs.existsSync(source)) return;
 
-        // Simple minify (optional upgrade later)
-        if (isProd) content = content.replace(/\s+/g, ' ').trim();
+    fs.mkdirSync(destination, { recursive: true });
 
-        writeFile('css', name, content);
+    for (const entry of fs.readdirSync(source, { withFileTypes: true })) {
+        const sourcePath = path.join(source, entry.name);
+        const destinationPath = path.join(destination, entry.name);
+
+        if (entry.isDirectory()) {
+            copyDirectory(sourcePath, destinationPath);
+            continue;
+        }
+
+        fs.copyFileSync(sourcePath, destinationPath);
     }
+}
+
+async function buildTemplates() {
+    const sourceDir = path.join(RESOURCES, 'templates');
+    const outputDir = path.join(PUBLIC, 'templates');
+
+    if (fs.existsSync(outputDir)) {
+        fs.rmSync(outputDir, { recursive: true, force: true });
+    }
+
+    copyDirectory(sourceDir, outputDir);
+}
+
+async function buildIndexHtml() {
+    const sourcePath = path.join(RESOURCES, 'index.html');
+    const outputPath = path.join(PUBLIC, 'index.html');
+
+    if (!fs.existsSync(sourcePath)) return;
+
+    let html = fs.readFileSync(sourcePath, 'utf-8');
+
+    // Only replace in production
+    if (isProd) {
+        Object.entries(manifest).forEach(([original, hashed]) => {
+            html = html.replaceAll(original, hashed);
+        });
+    }
+
+    fs.writeFileSync(outputPath, html);
 }
 
 // MAIN BUILD
 async function build() {
+    if (fs.existsSync(PUBLIC)) {
+        fs.rmSync(PUBLIC, { recursive: true, force: true });
+    }
+
+    ['js', 'css', 'templates'].forEach(dir => {
+        const full = path.join(PUBLIC, dir);
+        fs.mkdirSync(full, { recursive: true });
+    });
+
     console.log(isProd ? 'Building (production)...' : 'Building (development)...');
 
     await buildJS();
     await buildCSS();
+    await buildTemplates();
+    await buildIndexHtml();
 
     // Write manifest
     fs.writeFileSync(

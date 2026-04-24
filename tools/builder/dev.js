@@ -3,7 +3,6 @@ const esbuild = require('esbuild');
 const chokidar = require('chokidar');
 const fs = require('fs');
 const path = require('path');
-const crypto = require('crypto');
 const WebSocket = require('ws');
 
 const ROOT = path.resolve(__dirname, '../../');
@@ -13,7 +12,6 @@ const PUBLIC = path.join(ROOT, 'public');
 const PORT = 3001;
 const WS_PORT = 3002;
 
-// --- Live reload WS ---
 const wss = new WebSocket.Server({ port: WS_PORT });
 function broadcastReload(type, file) {
     wss.clients.forEach(client => {
@@ -21,110 +19,146 @@ function broadcastReload(type, file) {
     });
 }
 
-// --- Hash helper ---
-function hash(content) {
-    return crypto.createHash('md5').update(content).digest('hex').slice(0, 8);
-}
-
-// --- Manifest ---
 const manifestPath = path.join(PUBLIC, 'manifest.json');
 let manifest = {};
 if (fs.existsSync(manifestPath)) {
     manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'));
 }
 
-// --- Ensure output dirs ---
-['js', 'css'].forEach(dir => {
+['js', 'css', 'templates'].forEach(dir => {
     const full = path.join(PUBLIC, dir);
     if (!fs.existsSync(full)) fs.mkdirSync(full, { recursive: true });
 });
 
-// --- Clean old files ---
-function cleanOldFiles(dir, base, ext) {
-    fs.readdirSync(dir).forEach(f => {
-        if (f.startsWith(base) && f.endsWith(ext)) fs.unlinkSync(path.join(dir, f));
-    });
+function resolveCssImports(content, fromFile, seen = new Set()) {
+    const importPattern = /@import\s+["'](.+?)["'];?/g;
+    let result = content;
+    let match;
+
+    while ((match = importPattern.exec(content)) !== null) {
+        const importPath = match[1];
+        if (!importPath.startsWith('.')) continue;
+
+        const resolvedPath = path.resolve(path.dirname(fromFile), importPath);
+        if (seen.has(resolvedPath) || !fs.existsSync(resolvedPath)) {
+            result = result.replace(match[0], '');
+            continue;
+        }
+
+        seen.add(resolvedPath);
+        const importedContent = fs.readFileSync(resolvedPath, 'utf-8');
+        const flattenedContent = resolveCssImports(importedContent, resolvedPath, seen);
+        result = result.replace(match[0], flattenedContent);
+    }
+
+    return result;
 }
 
-// --- Build CSS with HMR ---
-async function buildCSS(file) {
-    const src = path.join(RESOURCES, 'css', file);
-    const outDir = path.join(PUBLIC, 'css');
-    let content = fs.readFileSync(src, 'utf-8');
-    content = content.replace(/\s+/g, ' ').trim();
+async function buildCSS() {
+    const filePath = path.join(RESOURCES, 'css', 'app.css');
+    const outPath = path.join(PUBLIC, 'css', 'app.css');
+    const content = resolveCssImports(fs.readFileSync(filePath, 'utf-8'), filePath)
+        .replace(/\s+/g, ' ')
+        .trim();
 
-    // remove old built CSS
-    cleanOldFiles(outDir, file.replace('.css', ''), '.css');
-
-    const h = hash(content);
-    const outFile = `${file.replace('.css', '')}.${h}.css`;
-    fs.writeFileSync(path.join(outDir, outFile), content);
-
-    manifest[`css/${file}`] = `css/${outFile}`;
+    fs.writeFileSync(outPath, content);
+    manifest['css/app.css'] = 'css/app.css';
     fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2));
 
-    // HMR broadcast
-    broadcastReload('css', `css/${outFile}`);
-    console.log(`[HMR] CSS updated: ${outFile}`);
+    broadcastReload('css', 'css/app.css');
+    console.log('[HMR] CSS updated: app.css');
 }
 
-// --- Rebuild all CSS initially ---
-async function rebuildAllCSS() {
-    const cssFiles = fs.readdirSync(path.join(RESOURCES, 'css')).filter(f => f.endsWith('.css'));
-    for (const f of cssFiles) await buildCSS(f);
+function copyDirectory(source, destination) {
+    if (!fs.existsSync(source)) return;
+
+    fs.mkdirSync(destination, { recursive: true });
+
+    for (const entry of fs.readdirSync(source, { withFileTypes: true })) {
+        const sourcePath = path.join(source, entry.name);
+        const destinationPath = path.join(destination, entry.name);
+
+        if (entry.isDirectory()) {
+            copyDirectory(sourcePath, destinationPath);
+            continue;
+        }
+
+        fs.copyFileSync(sourcePath, destinationPath);
+    }
 }
 
-// --- Start JS dev server with proper rebuild hook ---
-async function startJSDevServer() {
-    const jsFiles = fs.readdirSync(path.join(RESOURCES, 'js')).filter(f => f.endsWith('.js'));
-    const jsEntries = jsFiles.map(f => path.join(RESOURCES, 'js', f));
+async function buildTemplates() {
+    const sourceDir = path.join(RESOURCES, 'templates');
+    const outputDir = path.join(PUBLIC, 'templates');
+
+    if (fs.existsSync(outputDir)) {
+        fs.rmSync(outputDir, { recursive: true, force: true });
+    }
+
+    copyDirectory(sourceDir, outputDir);
+}
+
+async function buildIndexHtml() {
+    const sourcePath = path.join(RESOURCES, 'index.html');
+    const outputPath = path.join(PUBLIC, 'index.html');
+
+    if (!fs.existsSync(sourcePath)) return;
+
+    fs.copyFileSync(sourcePath, outputPath);
+}
+
+async function buildJS() {
+    const entry = path.join(RESOURCES, 'js', 'main.js');
+    const outDir = path.join(PUBLIC, 'js');
 
     const ctx = await esbuild.context({
-        entryPoints: jsEntries,
+        entryPoints: [entry],
         bundle: true,
         sourcemap: true,
         minify: false,
-        outdir: path.join(PUBLIC, 'js')
+        outfile: path.join(outDir, 'main.js')
     });
 
-    // Watch JS changes via chokidar instead
-    const jsWatcher = chokidar.watch(path.join(RESOURCES, 'js'));
-    jsWatcher.on('change', async filePath => {
-        console.log('[JS] File changed:', filePath);
+    await ctx.rebuild();
+    manifest['js/main.js'] = 'js/main.js';
+    fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2));
+    broadcastReload('js', 'js/main.js');
+    console.log('[HMR] JS built: main.js');
 
+    chokidar.watch(path.join(RESOURCES, 'js')).on('change', async () => {
         try {
-            await ctx.rebuild(); // rebuild JS bundle
-            console.log('[JS HMR] JS rebuilt');
-
-            // update manifest
-            const file = path.basename(filePath);
-            manifest[`js/${file}`] = `js/${file}`; // dev: no hash
+            await ctx.rebuild();
+            manifest['js/main.js'] = 'js/main.js';
             fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2));
-
-            // broadcast reload
-            broadcastReload('js');
+            broadcastReload('js', 'js/main.js');
+            console.log('[HMR] JS rebuilt: main.js');
         } catch (err) {
-            console.error('[JS HMR] Rebuild failed:', err);
+            console.error('[HMR] JS rebuild failed:', err);
         }
     });
 
-    server = await ctx.serve({
+    const server = await ctx.serve({
         servedir: PUBLIC,
         port: PORT,
         host: 'localhost'
     });
 
-    console.log(`⚡ JS dev server running at http://localhost:${server.port}`);
-    console.log(`🌐 Live reload WS running at ws://localhost:${WS_PORT}`);
+    console.log(`Dev server running at http://localhost:${server.port}`);
+    console.log(`Live reload WS at ws://localhost:${WS_PORT}`);
 }
 
-// --- Watch CSS for changes ---
-chokidar.watch(path.join(RESOURCES, 'css')).on('change', async (filePath) => {
-    const file = path.basename(filePath);
-    await buildCSS(file);
+chokidar.watch(path.join(RESOURCES, 'css')).on('change', async () => {
+    await buildCSS();
 });
 
-// --- Initial CSS build ---
-rebuildAllCSS().then(() => {
-    startJSDevServer().catch(err => console.error(err));
+chokidar.watch(path.join(RESOURCES, 'templates')).on('change', async () => {
+    await buildTemplates();
+    broadcastReload('js', 'js/main.js');
 });
+
+chokidar.watch(path.join(RESOURCES, 'index.html')).on('change', async () => {
+    await buildIndexHtml();
+    broadcastReload('js', 'js/main.js');
+});
+
+buildCSS().then(buildTemplates).then(buildIndexHtml).then(buildJS).catch(console.error);

@@ -1,0 +1,145 @@
+html {
+    scroll-behavior: smooth;
+}
+
+body.route-login {
+    background: #f4f4f4;
+    color: #333;
+}
+
+.logo {
+    color: var(--text, inherit);
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.nav a.is-active {
+    color: #fff;
+}
+
+.reveal-ready {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.reveal-ready.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.btn {
+    position: relative;
+    overflow: hidden;
+}
+
+.ripple {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.4);
+    transform: translate(-50%, -50%) scale(0);
+    animation: ripple-burst 0.5s ease-out;
+    pointer-events: none;
+}
+
+.auth-shell {
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+}
+
+.auth-card {
+    width: min(100%, 420px);
+}
+
+.form-status {
+    min-height: 1.5rem;
+    margin-top: 12px;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.dashboard-shell,
+.not-found-shell {
+    min-height: calc(100vh - 180px);
+    display: grid;
+    place-items: center;
+    padding: 32px 24px 72px;
+}
+
+.dashboard-card,
+.not-found-card {
+    background: var(--card, #13202a);
+    border: 1px solid var(--border, rgba(255, 255, 255, 0.12));
+    border-radius: 24px;
+    padding: 40px;
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.24);
+}
+
+.dashboard-card h2,
+.not-found-card h1 {
+    margin-bottom: 12px;
+}
+
+.dashboard-card p {
+    color: var(--muted, #667);
+}
+
+.dashboard-card p,
+.not-found-card p {
+    max-width: 56ch;
+}
+
+@media (max-width: 640px) {
+    .auth-shell,
+    .dashboard-shell,
+    .not-found-shell {
+        padding: 20px 16px 48px;
+    }
+
+    .auth-card {
+        width: 100%;
+        max-width: 420px;
+    }
+
+    .dashboard-card,
+    .not-found-card {
+        padding: 24px 18px;
+        border-radius: 18px;
+    }
+
+    .dashboard-card h2,
+    .not-found-card h1 {
+        font-size: clamp(1.5rem, 7vw, 2rem);
+        line-height: 1.15;
+    }
+}
+
+@media (max-width: 420px) {
+    .auth-shell,
+    .dashboard-shell,
+    .not-found-shell {
+        padding: 16px 14px 36px;
+    }
+
+    .dashboard-card,
+    .not-found-card {
+        padding: 20px 14px;
+        border-radius: 16px;
+    }
+
+    .form-status {
+        font-size: 0.9rem;
+    }
+}
+
+@keyframes ripple-burst {
+    to {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(12);
+    }
+}

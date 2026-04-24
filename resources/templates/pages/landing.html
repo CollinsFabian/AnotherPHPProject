@@ -1,0 +1,120 @@
+<section class="hero">
+    <div class="container hero-layout">
+        <div class="hero-copy">
+            <p class="eyebrow">PHP backend. SPA frontend. One clean boundary.</p>
+            <h1>Keep the backend simple and let the frontend breathe.</h1>
+            <p class="hero-lead">
+                Ziro is for people who want their PHP app to stay focused on real backend work:
+                auth, business logic, data, and APIs. The frontend runs as a proper SPA, so the
+                product feels modern without turning the backend into a pile of page glue.
+            </p>
+            <div class="hero-stats">
+                <div class="stat">
+                    <strong>Cleaner routing</strong>
+                    <span>Frontend routes stay in the client where they belong.</span>
+                </div>
+                <div class="stat">
+                    <strong>One backend surface</strong>
+                    <span>The same API can power web, mobile, and anything else later.</span>
+                </div>
+                <div class="stat">
+                    <strong>Less framework noise</strong>
+                    <span>Small moving parts, fewer layers, and a setup you can actually follow.</span>
+                </div>
+            </div>
+            <div class="cta">
+                <a href="#start" class="btn primary">Start Building</a>
+                <a href="https://github.com/CollinsFabian/Ziro" target="_blank" rel="noreferrer" class="btn ghost">View
+                    GitHub</a>
+            </div>
+        </div>
+
+        <div class="hero-panel">
+            <div class="code-block">
+                <div class="code-header">api.php</div>
+                <pre><code class="language-php">$router->post('/api/v1/login', [AuthController::class, 'login']);
+$router->get('/api/v1/user', [UserController::class, 'profile']);</code>
+                </pre>
+            </div>
+            <div class="route-card">
+                <span>Frontend</span>
+                <p>/login, /dashboard, /settings</p>
+                <small>Served by index.html and handled entirely in the SPA.</small>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="features" class="features container">
+    <div class="section-heading">
+        <p class="eyebrow">Why Ziro</p>
+        <h2>Built for teams that want their stack to make sense six months later.</h2>
+    </div>
+    <div class="grid">
+        <article class="card">
+            <h3>Backend stays backend</h3>
+            <p>Your PHP code handles auth, data, policies, and business logic instead of trying to also be a page rendering layer.</p>
+        </article>
+        <article class="card">
+            <h3>Future mobile support is easier</h3>
+            <p>When the API is already the contract, adding a mobile client later feels like an extension, not a rewrite.</p>
+        </article>
+        <article class="card">
+            <h3>Small enough to understand</h3>
+            <p>No giant maze of conventions. Just routes, middleware, services, templates, and a frontend entry you can trace quickly.</p>
+        </article>
+        <article class="card">
+            <h3>Static frontend delivery</h3>
+            <p>The SPA builds into public, serves fast, and keeps runtime pressure off PHP where it matters.</p>
+        </article>
+        <article class="card">
+            <h3>Practical developer flow</h3>
+            <p>You get template fragments, one app stylesheet, and a local router that behaves like production.</p>
+        </article>
+        <article class="card">
+            <h3>Less cleanup later</h3>
+            <p>Starting with a cleaner boundary now means fewer painful migrations when the product gets bigger.</p>
+        </article>
+    </div>
+</section>
+
+<section id="code" class="code container">
+    <div class="section-heading">
+        <p class="eyebrow">How It Flows</p>
+        <h2>A simpler split between product UI and backend logic.</h2>
+    </div>
+    <div class="flow-grid">
+        <div class="code-block">
+            <div class="code-header">Frontend routes</div>
+            <pre><code class="language-js">router.get('/', async () => mountLandingPage());
+router.get('/login', async () => mountLoginPage());
+router.get('/dashboard', async () => mountDashboardPage());</code></pre>
+        </div>
+        <div class="code-block">
+            <div class="code-header">Serve locally</div>
+            <pre><code class="language-bash">zi serve
+zi build:assets --dev</code></pre>
+        </div>
+    </div>
+</section>
+
+<section id="start" class="start container">
+    <div class="section-heading">
+        <p class="eyebrow">Get Started</p>
+        <h2>Three steps to get moving.</h2>
+    </div>
+    <div class="steps">
+        <div class="step">
+            <span>01</span>
+            Build your backend around /api/* routes.
+        </div>
+        <div class="step">
+            <span>02</span>
+            Ship the frontend as a real SPA.
+        </div>
+        <div class="step">
+            <span>03</span>
+            Reuse the same API for web today and mobile later.
+        </div>
+    </div>
+</section>

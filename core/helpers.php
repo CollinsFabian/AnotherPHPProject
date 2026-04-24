@@ -20,28 +20,3 @@ function to(string $url)
     return redirect($url);
 }
 
-function view(string $view, array $data = [], string $layout = "layouts/main")
-{
-    return \Core\View\View::render($view, $data, $layout);
-}
-
-function asset(string $path): string
-{
-    if (getenv('APP_ENV') === 'dev') {
-        $manifest = json_decode(file_get_contents(__DIR__ . '/../public/manifest.json'), true);
-        return '/' . ($manifest[$path] ?? $path);
-    }
-
-
-    static $manifest = null;
-
-    if ($manifest === null) {
-        $manifestFile = __DIR__ . '/../public/manifest.json';
-
-        $manifest = file_exists($manifestFile)
-            ? json_decode(file_get_contents($manifestFile), true)
-            : [];
-    }
-
-    return '/' . ($manifest[$path] ?? $path);
-}

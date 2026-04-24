@@ -1,7 +1,4 @@
 {
-  "js/landing.js": "js/landing.js",
-  "js/login.js": "js/login.js",
-  "js/utils.js": "js/utils.js",
-  "css/landing.css": "css/landing.c6b8cdb2.css",
-  "css/login.css": "css/login.9bd12c96.css"
+  "js/main.js": "js/main.js",
+  "css/app.css": "css/app.css"
 }

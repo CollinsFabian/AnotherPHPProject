@@ -20,7 +20,8 @@ class Controller extends Command
             return;
         }
 
-        $path = __DIR__ . "/../../../../app/Controllers/";
+        $name = str_replace(['/', '\\'], '', $name);
+        $path = __DIR__ . "/../../../../app/Controllers/Api/";
 
         if (!is_dir($path)) mkdir($path, 0777, true);
 
@@ -36,6 +37,6 @@ class Controller extends Command
         $stub = str_replace("_className", $name, $stub);
 
         file_put_contents($filepath, $stub);
-        $this::successM("Controller created: {$name}");
+        $this::successM("API controller created: {$name}");
     }
 }

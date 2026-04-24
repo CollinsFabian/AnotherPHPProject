@@ -1,11 +1,14 @@
 <?php
 
-namespace App\Controllers;
+namespace App\Controllers\Api;
 
 class _className
 {
     public function index()
     {
-        return "Hello from _className";
+        return json([
+            "status" => "success",
+            "message" => "_className endpoint",
+        ]);
     }
 }

@@ -45,7 +45,6 @@ class Kernel
     public function registerRoutes(): void
     {
         $router = $this->router; // DI
-        require base_path("app/Routes/web.php");
         require base_path("app/Routes/api.php");
     }
 

@@ -23,28 +23,37 @@ No magic. No complex containers. Just straightforward routing and execution.
 
 ## Usage
 
-**Starting a server**
+**Starting the API + SPA dev server**
 
 ```console
-php -S localhost:3000 -t public
+zi serve
 ```
+
+This serves the frontend as a real SPA:
+
+- `/api/*` is handled by PHP
+- static files are served from `public/`
+- all other routes fall back to `public/index.html`
 
 ---
 
 
-**Define Routes**
+**Define API Routes**
 
 ```php
-$router->get('/', function () {
-    return "Hello world";
-});
-
-$router->get('/home', fn() => to("/")); // redirecting urls (old/legacy) to new routes
-
-$router->get('/user/{id}', [UserController::class, 'show']);
-
-$router->get('/dashboard', [DashboardController::class, 'index'])->middleware([\Core\Middleware\AuthMiddleware::class]);
+$router->get('/api/v1/user', [UserController::class, 'profile']);
+$router->post('/api/v1/login', [AuthController::class, 'login']);
 ```
+
+---
+
+**Create an API controller**
+
+```console
+zi make:controller UserController
+```
+
+New controllers are generated in `app/Controllers/Api`.
 
 ---
 
@@ -53,9 +62,12 @@ $router->get('/dashboard', [DashboardController::class, 'index'])->middleware([\
 ```php
 class UserController
 {
-    public function show($id)
+    public function profile()
     {
-        return "User: " . $id;
+        return json([
+            "status" => "success",
+            "data" => ["id" => 1]
+        ]);
     }
 }
 ```
@@ -84,6 +96,43 @@ public function executeRoute(array $route, Request $request)
 ```
 
 ---
+
+## Production Routing
+
+Production must follow the same split:
+
+- `/api/*` -> PHP
+- existing static files -> serve directly
+- everything else -> `public/index.html`
+
+**Nginx**
+
+```nginx
+location /api/ {
+    try_files $uri /index.php?$query_string;
+}
+
+location / {
+    try_files $uri $uri/ /index.html;
+}
+```
+
+A ready-to-edit example is included at [`deploy/nginx.conf.example`](./deploy/nginx.conf.example).
+
+**Apache (.htaccess)**
+
+```apache
+RewriteEngine On
+
+RewriteCond %{REQUEST_URI} ^/api/
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^ index.php [QSA,L]
+
+RewriteCond %{REQUEST_URI} !^/api/
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.html [L]
+```
 
 ### Philosophy
 
